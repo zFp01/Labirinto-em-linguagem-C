@@ -1,0 +1,323 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
+#include <curses.h>
+#include<time.h>
+
+int main (void ){
+
+int a, b, m, n, z, x, y, i, p, q;  // Interações  
+int cont=-2;                      // Contador1
+int cont2=-2;                    // Contador2
+int cont3=0;                    // Contador3
+int cont4=0;                   // Contador4
+int cont5=0;                  // Contador5
+int cont6=0;                 // Contador6
+int jogador, teste;         // Aonde o Jogador vai começar
+int saida;                 // Índice de saída do labirinto
+int resultado = 10;
+int duvida = 0;
+int posicao = 0;        // Posição atual
+
+
+printf("Digite abaixo o tamanho do Labirinto:\n");
+printf("Linhas: ");
+scanf("%d", &a);
+printf("Colunas: ");
+scanf("%d", &b);
+
+while(a<3 || b<3){
+  printf("\n    Tamanho Inválido, digite novamente!\n\n");
+  printf("Digite abaixo o tamanho do Labirinto:\n");
+  printf("Linhas: ");
+  scanf("%d", &a);
+  printf("Colunas: ");
+  scanf("%d", &b);
+}
+
+// Labirinto pequeno(Manualmente)
+if(a<7 && b<7){
+
+  // L == Linha, C == Coluna...
+  int labirinto[a][b], l, c;
+
+  printf("\nDigite os índices do Labirinto: (Apenas 0 ou 1)\n");
+  for(l=0; l<a; l++)
+    for(c=0; c<b; c++){
+      printf("\nLinha(%d), Coluna(%d) = ", l, c);
+      scanf("%d", &labirinto[l][c]);
+      while(labirinto[l][c]>1 || labirinto[l][c]<0){
+        printf("\nNúmero Ínvalido, Linha(%d), Coluna(%d) = ", l, c);
+        scanf("%d", &labirinto[l][c]);
+      }
+    }
+
+  // Restrições para o labirinto 
+  for(m=0; m<c; m++){
+    if(labirinto[m+1][0] != 1){        // Entrada do labirinto
+      cont += 1;
+    }
+  }
+  for(n=0; n<c; n++){
+    if(labirinto[n+1][c-1] != 1){      // Saída do labirinto
+      cont2 += 1;
+    }
+  }
+  for(z=0; z<c; z++){
+    if(labirinto[0][z] != 0){          // Borda de cima
+      cont3 += 1;
+    }
+    if(labirinto[l-1][z] != 0){        // Borda de baixo
+      cont4 += 1;
+    }
+    if(labirinto[z][0] != 0){        // Borda da esquerda
+      cont5 += 1;
+    }
+    if(labirinto[z][c-1] != 0){        // Borda da direita
+      cont6 += 1;
+    }
+  }
+
+//printf("\ncont3: %d, cont4: %d, cont5: %d, cont6: %d\n\n", cont3, cont4, cont5, cont6); // Testando as restrições
+
+  if(cont2+2 == c || cont+2 == c || cont3 != 0 || cont4 != 0 || cont5 != 1 || cont6 != 1){
+    printf("\n\nImpossivel criar um Labirinto, Tente novamente!\n\n");
+    }
+  // Criando o labirinto
+  else{
+    printf("\nLABIRINTO: \n");
+    for( l=0; l<a; l++ )
+      for( c=0; c<b; c++ ){
+        printf("%d ",labirinto[l][c]);
+          if((c+1)==b){
+          printf("\n");
+          }
+      }
+    for(x=0; x<l; x++){
+      if(labirinto[x][0] == 1){
+        jogador = x;
+        break;
+      } 
+    }
+    for(y=0; y<l; y++){
+      if(labirinto[y][c-1] == 1){
+        i = c-1;
+        saida = y;
+        break;
+      }
+    }
+  }
+  
+  l = x, c=0;
+
+  printf("\nHora de começar o Labirinto!\n");
+  
+  while(duvida!=resultado){
+    printf("\nQual é o seu próximo passo? \nEsquerda, digite 1\nCima, digite 2\nBaixo, digite 3\nDireita, digite 4.\n\n"); 
+    scanf("%d", &posicao);
+
+    if(posicao == 1){
+      jogador = labirinto[l][c-1];
+      c -= 1;
+      while(jogador != 1){
+        printf("\nOps...Isso é uma parede, escolha outro movimento!esq\n\n");
+        jogador = labirinto[l][c+1];
+        c += 1;
+        printf("Você está na linha: %d e coluna: %d\n", l, c);
+        scanf("\n\n%d", &posicao);
+      }
+    }
+    if(posicao == 2){
+      jogador = labirinto[l-1][c];
+      l -= 1;
+      while(jogador != 1){
+        printf("\nOps...Isso é uma parede, escolha outro movimento!cim\n\n");
+        jogador = labirinto[l+1][c];
+        l += 1;
+        printf("Você está na linha: %d e coluna: %d\n", l, c);
+        scanf("\n\n%d", &posicao);
+      }
+    }
+    if(posicao == 3){
+      jogador = labirinto[l+1][c];
+      l += 1;
+      while(jogador != 1){
+        printf("\nOps...Isso é uma parede, escolha outro movimento!baix\n\n");
+        jogador = labirinto[l-1][c];
+        l -= 1;
+        printf("Você está na linha: %d e coluna: %d\n", l, c);
+        scanf("\n\n%d", &posicao);
+      }
+    }
+    if(posicao == 4){
+      jogador = labirinto[l][c+1];
+      c += 1;
+      while(jogador != 1){
+        printf("\nOps...Isso é uma parede, escolha outro movimento!dir\n\n");
+        jogador = labirinto[l][c-1];
+        c -= 1;
+        printf("Você está na linha: %d e coluna: %d\n", l, c);
+        scanf("\n\n%d", &posicao);
+      }
+    }
+  
+  printf("\nVocê está na linha: %d e coluna: %d\n", l, c);
+  if(l == y && c == i){
+    printf("Parabéns!! Você chegou ao final do Labirinto.");
+    break;
+  }
+  }
+//printf("\n\nÍndice de entrada: [%d][0], Índicie de saída: [%d][%d]\n\n", jogador, saida, c-1); // Testando os índices
+}
+// Labirinto Grande(Automático)
+else{
+  int labirinto[a][b], l, c;
+  srand(time(NULL));  
+  //printf("\nDigite os índices do Labirinto: (Apenas 0 ou 1)\n");
+  for(l=0; l<a; l++)
+    for(c=0; c<b; c++){
+      //printf("\nLinha(%d), Coluna(%d) = ", l, c);
+      labirinto[l][c] = rand() % 2;
+      while(labirinto[l][c]>1 || labirinto[l][c]<0){
+        printf("\nNúmero Ínvalido, Linha(%d), Coluna(%d) = ", l, c);
+        scanf("%d", &labirinto[l][c]);
+      }
+    }
+
+  // Restrições para o labirinto 
+  for(m=0; m<c; m++){
+    if(labirinto[m+1][0] != 1){        // Entrada do labirinto
+      labirinto[m+1][1] = 1;
+      cont += 1;
+      p = rand() % l-2;
+      while(p<0){
+        p = rand() % l-2;
+      }
+      break;
+    }
+  }
+  for(n=0; n<c; n++){
+    if(labirinto[n+1][c-1] != 1){      // Saída do labirinto
+      labirinto[n+1][c-1] = 1;
+      cont2 += 1;
+      q = rand() % l-2;
+      while(q<0){
+        q = rand() % l-2;
+      }
+      break;
+    }
+  }
+  for(z=0; z<c; z++){
+    labirinto[0][z] = 0;         // Borda de cima
+    
+    labirinto[l-1][z] = 0;      // Borda de baixo
+    
+    labirinto[z][0] = 0;        
+    labirinto[p+1][0] = 1;    // Borda da esquerda
+    labirinto[p+1][1] = 1;
+    
+    labirinto[z][c-1] = 0;     
+    labirinto[q+1][c-1] = 1;    // Borda da esquerda
+    labirinto[q+1][c-2] = 1;
+    
+  }
+  //printf("entrada: %d saida: %d", p, q);
+
+//printf("\ncont3: %d, cont4: %d, cont5: %d, cont6: %d\n\n", cont3, cont4, cont5, cont6); // Testando as restrições
+int pode = 1;
+  if(cont2+2 == c || cont+2 == c){
+    printf("\n\nImpossivel criar um Labirinto, Tente novamente!\n\n");
+    pode = 0;
+    }
+  
+  // Criando o labirinto
+  else{
+    printf("\nLABIRINTO: \n");
+    for( l=0; l<a; l++ )
+      for( c=0; c<b; c++ ){
+        printf("%d ",labirinto[l][c]);
+          if((c+1)==b){
+          printf("\n");
+          }
+      }
+    for(x=0; x<l; x++){
+      if(labirinto[x][0] == 1){
+        jogador = x;
+        break;
+      } 
+    }
+    for(y=0; y<l; y++){
+      if(labirinto[y][c-1] == 1){
+        i = c-1;
+        saida = y;
+        break;
+      }
+    }
+  }
+  if(pode==1){
+  l = x, c=0;
+
+  printf("\nHora de começar o Labirinto!\n");
+  
+  while(duvida!=resultado){
+    printf("\nQual é o seu próximo passo? \nEsquerda, digite 1\nCima, digite 2\nBaixo, digite 3\nDireita, digite 4.\n\n"); 
+    scanf("%d", &posicao);
+
+    if(posicao < 1 || posicao > 4){
+      printf("Ação Ínvalida, Tende novamente!\n");
+    }
+    if(posicao == 1){
+      jogador = labirinto[l][c-1];
+      c -= 1;
+      while(jogador != 1){
+        printf("\nOps...Isso é uma parede, escolha outro movimento!\n\n");
+        jogador = labirinto[l][c+1];
+        c += 1;
+        printf("Você está na linha: %d e coluna: %d\n", l, c);
+        scanf("\n\n%d", &posicao);
+      }
+    }
+    if(posicao == 2){
+      jogador = labirinto[l-1][c];
+      l -= 1;
+      while(jogador != 1){
+        printf("\nOps...Isso é uma parede, escolha outro movimento!\n\n");
+        jogador = labirinto[l+1][c];
+        l += 1;
+        printf("Você está na linha: %d e coluna: %d\n", l, c);
+        scanf("\n\n%d", &posicao);
+      }
+    }
+    if(posicao == 3){
+      jogador = labirinto[l+1][c];
+      l += 1;
+      while(jogador != 1){
+        printf("\nOps...Isso é uma parede, escolha outro movimento!\n\n");
+        jogador = labirinto[l-1][c];
+        l -= 1;
+        printf("Você está na linha: %d e coluna: %d\n", l, c);
+        scanf("\n\n%d", &posicao);
+      }
+    }
+    if(posicao == 4){
+      jogador = labirinto[l][c+1];
+      c += 1;
+      while(jogador != 1){
+        printf("\nOps...Isso é uma parede, escolha outro movimento!\n\n");
+        jogador = labirinto[l][c-1];
+        c -= 1;
+        printf("Você está na linha: %d e coluna: %d\n", l, c);
+        scanf("\n\n%d", &posicao);
+      }
+    }
+  
+  printf("\nVocê está na linha: %d e coluna: %d\n", l, c);
+  if(l == y && c == i){
+    printf("Parabéns!! Você chegou ao final do Labirinto.");
+    break;
+  }
+  }
+}
+}
+  return(0);
+}
